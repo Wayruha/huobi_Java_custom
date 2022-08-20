@@ -9,6 +9,7 @@ import com.huobi.exception.SDKException;
 import com.huobi.model.generic.CurrencyChain;
 import com.huobi.model.generic.MarketStatus;
 import com.huobi.model.generic.Symbol;
+import com.huobi.model.generic.SymbolV2;
 import com.huobi.service.huobi.HuobiGenericService;
 
 public interface GenericClient {
@@ -18,6 +19,8 @@ public interface GenericClient {
   MarketStatus getMarketStatus();
 
   List<Symbol> getSymbols();
+
+  List<SymbolV2> getSymbolsV2();
 
   List<String> getCurrencys();
 

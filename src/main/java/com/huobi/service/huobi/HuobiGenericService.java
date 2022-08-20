@@ -12,10 +12,12 @@ import com.huobi.constant.Options;
 import com.huobi.model.generic.CurrencyChain;
 import com.huobi.model.generic.MarketStatus;
 import com.huobi.model.generic.Symbol;
+import com.huobi.model.generic.SymbolV2;
 import com.huobi.service.huobi.connection.HuobiRestConnection;
 import com.huobi.service.huobi.parser.generic.CurrencyChainParser;
 import com.huobi.service.huobi.parser.generic.MarketStatusParser;
 import com.huobi.service.huobi.parser.generic.SymbolParser;
+import com.huobi.service.huobi.parser.generic.SymbolParserV2;
 import com.huobi.service.huobi.signature.UrlParamsBuilder;
 
 public class HuobiGenericService implements GenericClient {
@@ -24,6 +26,7 @@ public class HuobiGenericService implements GenericClient {
 
   public static final String GET_MARKET_STATUS_PATH = "/v2/market-status";
   public static final String GET_SYMBOLS_PATH = "/v1/common/symbols";
+  public static final String GET_SYMBOLS_PATH_V2 = "/v2/settings/common/symbols";
   public static final String GET_CURRENCY_PATH = "/v1/common/currencys";
   public static final String GET_CURRENCY_CHAINS_PATH = "/v2/reference/currencies";
   public static final String GET_TIMESTAMP = "/v1/common/timestamp";
@@ -59,12 +62,18 @@ public class HuobiGenericService implements GenericClient {
   }
 
   @Override
+  public List<SymbolV2> getSymbolsV2() {
+    JSONObject jsonObject = restConnection.executeGet(GET_SYMBOLS_PATH_V2, UrlParamsBuilder.build());
+    JSONArray data = jsonObject.getJSONArray("data");
+    return new SymbolParserV2().parseArray(data);
+  }
+
+  @Override
   public List<String> getCurrencys() {
 
     JSONObject jsonObject = restConnection.executeGet(GET_CURRENCY_PATH, UrlParamsBuilder.build());
     JSONArray data = jsonObject.getJSONArray("data");
     return data.toJavaList(String.class);
-
   }
 
   @Override
