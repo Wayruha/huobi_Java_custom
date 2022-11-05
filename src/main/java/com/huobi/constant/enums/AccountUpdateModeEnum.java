@@ -8,20 +8,25 @@ import lombok.Getter;
 @Getter
 public enum AccountUpdateModeEnum {
 
-  /**
-   * Subscribe available balance
-   */
-  AVAILABLE_CHANGE("0"),
+    /**
+     * Subscribe TOTAL balance, total balance is the sum of available and frozen
+     */
+    ACCOUNT_CHANGE("0"),
 
-  /**
-   * Subscribe TOTAL balance, total balance is the sum of available and frozen
-   */
-  ACCOUNT_CHANGE("1");
+    /**
+     * Subscribe available balance
+     */
+    AVAILABLE_CHANGE("1"),
 
-  private final String code;
+    /**
+     * Whenever account balance or available balance changed, it will be updated together
+     */
+    BOTH("2");
 
-  AccountUpdateModeEnum(String code) {
-    this.code = code;
-  }
+    private final String code;
+
+    AccountUpdateModeEnum(String code) {
+        this.code = code;
+    }
 
 }
