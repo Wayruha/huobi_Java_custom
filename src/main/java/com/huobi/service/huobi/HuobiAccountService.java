@@ -222,7 +222,7 @@ public class HuobiAccountService implements AccountClient {
     return new AccountAssetValuationResultParser().parse(jsonObject);
   }
 
-  public void subAccountsUpdate(SubAccountUpdateRequest request, ResponseCallback<AccountUpdateEvent> callback) {
+  public HuobiWebSocketConnection subAccountsUpdate(SubAccountUpdateRequest request, ResponseCallback<AccountUpdateEvent> callback) {
     InputChecker.checker()
         .shouldNotNull(request.getAccountUpdateMode(), "account update model");
 
@@ -235,7 +235,7 @@ public class HuobiAccountService implements AccountClient {
     List<String> commandList = new ArrayList<>();
     commandList.add(command.toJSONString());
 
-    HuobiWebSocketConnection.createAssetV2Connection(options, commandList, new AccountUpdateEventParser(), callback, false);
+    return HuobiWebSocketConnection.createAssetV2Connection(options, commandList, new AccountUpdateEventParser(), callback, false);
   }
 
 }

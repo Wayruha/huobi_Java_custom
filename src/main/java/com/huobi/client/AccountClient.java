@@ -26,6 +26,7 @@ import com.huobi.model.account.Point;
 import com.huobi.model.account.PointTransferResult;
 import com.huobi.model.subuser.SubUserState;
 import com.huobi.service.huobi.HuobiAccountService;
+import com.huobi.service.huobi.connection.HuobiWebSocketConnection;
 import com.huobi.utils.ResponseCallback;
 
 public interface AccountClient {
@@ -57,7 +58,7 @@ public interface AccountClient {
 
   AccountAssetValuationResult accountAssetValuation(AccountAssetValuationRequest request);
 
-  void subAccountsUpdate(SubAccountUpdateRequest request, ResponseCallback<AccountUpdateEvent> callback);
+  HuobiWebSocketConnection subAccountsUpdate(SubAccountUpdateRequest request, ResponseCallback<AccountUpdateEvent> callback);
 
   static AccountClient create(Options options) {
 
