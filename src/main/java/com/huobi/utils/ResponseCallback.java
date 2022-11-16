@@ -1,6 +1,8 @@
 package com.huobi.utils;
 
 
+import okhttp3.Response;
+
 /**
  * The interface for define asynchronous invoking callback.<br> If you want to ues the asynchronous
  * invoking, you must implement the ResponseCallback yourself. <br> The onResponse method is
@@ -16,4 +18,16 @@ public interface ResponseCallback<T> {
    *
    */
   void onResponse(T response);
+
+  default void onClosed(int code, String reason){
+
+  }
+
+  default void onFailure(Throwable ex, Response response){
+
+  }
+
+  default void onOpen(Response response){
+
+  }
 }

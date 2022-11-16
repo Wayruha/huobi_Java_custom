@@ -21,6 +21,8 @@ public interface GenericClient {
 
   List<MarketSymbol> getMarketSymbols();
 
+  List<SupportedCurrency> getSupportedCurrencies();
+
   List<String> getCurrencys();
 
   List<CurrencyChain> getCurrencyChains(CurrencyChainsRequest request);

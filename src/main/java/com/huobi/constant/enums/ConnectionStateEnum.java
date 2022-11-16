@@ -4,5 +4,6 @@ public enum ConnectionStateEnum {
   IDLE,
   DELAY_CONNECT,
   CONNECTED,
-  CLOSED_ON_ERROR
+  CLOSED_ON_ERROR,
+  CONNECTING
 }

@@ -148,12 +148,13 @@ public class HuobiWebSocketConnection extends WebSocketListener implements WebSo
 
 
   void connect() {
-    if (state == ConnectionStateEnum.CONNECTED) {
+    if (this.state != ConnectionStateEnum.CONNECTED && this.state != ConnectionStateEnum.CONNECTING) {
+      log.info("[Connection][" + this.getId() + "] Connecting...");
+      this.state = ConnectionStateEnum.CONNECTING;
+      this.webSocket = ConnectionFactory.createWebSocket(this.okhttpRequest, this);
+    } else {
       log.info("[Connection][" + this.getId() + "] Already connected");
-      return;
     }
-    log.info("[Connection][" + this.getId() + "] Connecting...");
-    webSocket = ConnectionFactory.createWebSocket(okhttpRequest, this);
   }
 
   public void reConnect(int delayInSecond) {
@@ -341,15 +342,17 @@ public class HuobiWebSocketConnection extends WebSocketListener implements WebSo
   @Override
   public void onClosed(WebSocket webSocket, int code, String reason) {
     super.onClosed(webSocket, code, reason);
-    if (state == ConnectionStateEnum.CONNECTED) {
+    if (state == ConnectionStateEnum.CONNECTED || state == ConnectionStateEnum.CONNECTING) {
       state = ConnectionStateEnum.IDLE;
     }
+    callback.onClosed(code, reason);
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public void onOpen(WebSocket webSocket, Response response) {
     super.onOpen(webSocket, response);
+    callback.onOpen(response);
     this.webSocket = webSocket;
     log.info("[Connection][" + this.getId() + "] Connected to server");
     if (options.isWebSocketAutoConnect()) {
@@ -385,6 +388,7 @@ public class HuobiWebSocketConnection extends WebSocketListener implements WebSo
   public void onFailure(WebSocket webSocket, Throwable t, Response response) {
     onError("Unexpected error: " + t.getMessage(), t);
     closeOnError();
+    callback.onFailure(t, response);
   }
 
   private void closeOnError() {

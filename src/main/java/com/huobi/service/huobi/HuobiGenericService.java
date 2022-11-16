@@ -21,7 +21,7 @@ public class HuobiGenericService implements GenericClient {
   public static final String GET_SYMBOLS_PATH = "/v1/common/symbols";
   public static final String GET_SYMBOLS_PATH_V2 = "/v2/settings/common/symbols";
   public static final String GET_MARKET_SYMBOLS = "/v1/settings/common/market-symbols";
-  public static final String GET_MARKET_CURRENCIES = "/v1/settings/common/currencies";
+  public static final String GET_MARKET_CURRENCIES = "/v2/settings/common/currencies";
   public static final String GET_CURRENCY_PATH = "/v1/common/currencys";
   public static final String GET_CURRENCY_CHAINS_PATH = "/v2/reference/currencies";
   public static final String GET_TIMESTAMP = "/v1/common/timestamp";
@@ -70,6 +70,7 @@ public class HuobiGenericService implements GenericClient {
     return new MarketSymbolParser().parseArray(data);
   }
 
+  @Override
   public List<SupportedCurrency> getSupportedCurrencies() {
     JSONObject jsonObject = restConnection.executeGet(GET_MARKET_CURRENCIES, UrlParamsBuilder.build());
     JSONArray data = jsonObject.getJSONArray("data");

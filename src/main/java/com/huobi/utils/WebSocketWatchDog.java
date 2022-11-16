@@ -15,16 +15,15 @@ import com.huobi.constant.enums.ConnectionStateEnum;
 
 public class WebSocketWatchDog {
 
-  public static final long RECEIVE_LIMIT_TS = 60_000;
-
-  public static final int DELAY_ON_FAILURE = 15;
+  public static long RECEIVE_LIMIT_TS = 60_000;
+  public static int DELAY_ON_FAILURE = 15;
+  public static int HEALTH_CHECK_RATE_MS = 1_000;
 
   private static final Map<Long,WebSocketConnection> TIME_HELPER = new ConcurrentHashMap<>();
   private static final Logger log = LoggerFactory.getLogger(WebSocketWatchDog.class);
 
 
   static {
-    long t = 1_000;
     ScheduledExecutorService exec = Executors.newScheduledThreadPool(1);
     exec.scheduleAtFixedRate(() -> {
       TIME_HELPER.entrySet().forEach(entry -> {
@@ -41,12 +40,10 @@ public class WebSocketWatchDog {
         } else if (connection.getState() == ConnectionStateEnum.DELAY_CONNECT) {
           connection.reConnect();
         } else if (connection.getState() == ConnectionStateEnum.CLOSED_ON_ERROR) {
-
           connection.reConnect(DELAY_ON_FAILURE);
-
         }
       });
-    }, t, t, TimeUnit.MILLISECONDS);
+    }, HEALTH_CHECK_RATE_MS, HEALTH_CHECK_RATE_MS, TimeUnit.MILLISECONDS);
     Runtime.getRuntime().addShutdownHook(new Thread(exec::shutdown));
   }
 
