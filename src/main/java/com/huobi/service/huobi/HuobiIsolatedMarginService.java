@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import com.huobi.client.IsolatedMarginClient;
+import com.huobi.client.req.crossmargin.GeneralRepayLoanRequest;
 import com.huobi.client.req.margin.IsolatedMarginAccountRequest;
 import com.huobi.client.req.margin.IsolatedMarginApplyLoanRequest;
 import com.huobi.client.req.margin.IsolatedMarginLoanInfoRequest;
@@ -16,10 +17,12 @@ import com.huobi.constant.Constants;
 import com.huobi.constant.HuobiOptions;
 import com.huobi.constant.Options;
 import com.huobi.constant.enums.MarginTransferDirectionEnum;
+import com.huobi.model.crossmargin.GeneralRepayLoanResult;
 import com.huobi.model.isolatedmargin.IsolatedMarginAccount;
 import com.huobi.model.isolatedmargin.IsolatedMarginLoadOrder;
 import com.huobi.model.isolatedmargin.IsolatedMarginSymbolInfo;
 import com.huobi.service.huobi.connection.HuobiRestConnection;
+import com.huobi.service.huobi.parser.account.GeneralRepayLoanResultParser;
 import com.huobi.service.huobi.parser.isolatedmargin.IsolatedMarginAccountParser;
 import com.huobi.service.huobi.parser.isolatedmargin.IsolatedMarginLoadOrderParser;
 import com.huobi.service.huobi.parser.isolatedmargin.IsolatedMarginSymbolInfoParser;
@@ -36,6 +39,7 @@ public class HuobiIsolatedMarginService implements IsolatedMarginClient {
 
   public static final String APPLY_LOAN_PATH = "/v1/margin/orders";
   public static final String REPAY_LOAN_PATH = "/v1/margin/orders/{order-id}/repay";
+  public static final String GENERAL_REPAY_LOAN_PATH = "/v2/account/repayment";
 
 
   private Options options;
@@ -147,7 +151,20 @@ public class HuobiIsolatedMarginService implements IsolatedMarginClient {
     return new IsolatedMarginSymbolInfoParser().parseArray(data);
   }
 
+  @Override
+  public List<GeneralRepayLoanResult> repayLoan(GeneralRepayLoanRequest request) {
+    InputChecker.checker()
+            .shouldNotNull(request.getAccountId(), "accountId")
+            .shouldNotNull(request.getCurrency(), "currency")
+            .shouldNotNull(request.getAmount(), "amount");
 
-
-
+    UrlParamsBuilder builder = UrlParamsBuilder.build()
+            .putToPost("accountId", request.getAccountId())
+            .putToPost("currency", request.getCurrency())
+            .putToPost("amount", request.getAmount())
+            .putToPost("transactId", request.getTransactId());
+    JSONObject jsonObject = restConnection.executePostWithSignature(GENERAL_REPAY_LOAN_PATH, builder);
+    JSONArray data = jsonObject.getJSONArray("data");
+    return new GeneralRepayLoanResultParser().parseArray(data);
+  }
 }
